@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+        .container {
+            padding: 20px;
+        }
+        .header {
+            font-size: 24px;
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+        .order-info {
+            margin: 15px 0;
+        }
+        .product-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .product-table th, .product-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        .total {
+            font-weight: bold;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <p class="header">Thank you for your order, {{ app.user.email }}!</p>
+
+    <p>Your order has been successfully placed on <strong>{{ order.createdAt|date('F j, Y, H:i') }}</strong>.</p>
+
+    <div class="order-info">
+        <p><strong>Order ID:</strong> {{ order.id }}</p>
+        <p><strong>Billing Address:</strong> {{ order.billingAddress.streetNumber }}, {{ order.billingAddress.streetName }}, {{ order.billingAddress.city }}, {{ order.billingAddress.zipCode }}</p>
+        <p><strong>Shipping Address:</strong> {{ order.shippingAddress.streetNumber }}, {{ order.shippingAddress.streetName }}, {{ order.shippingAddress.city }}, {{ order.shippingAddress.zipCode }}</p>
+    </div>
+
+    <table class="product-table">
+        <thead>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in order.orderItems %}
+            <tr>
+                <td>{{ item.product.name }}</td>
+                <td>{{ item.quantity }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <p class="total">Total: {{ order.total|number_format(2, '.', ',') }} €</p>
+
+    <p>If you have any questions, feel free to contact us at <a href="mailto:contact@arthurperdreau.com">contact@arthurperdreau.com</a>.</p>
+
+    <p>We appreciate your business!</p>
+</div>
+</body>
+</html>

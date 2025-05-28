@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+{% block title %}Images{% endblock %}
+
+{% block body %}
+    <div class="min-h-screen bg-gray-50 p-8 text-gray-900">
+
+        <!-- Image Gallery -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-12">
+            {% for image in product.images %}
+                <div class="relative bg-white rounded-xl shadow-md overflow-hidden group hover:shadow-lg transition-shadow duration-300">
+                    <!-- Delete Button -->
+                    <a href="{{ path('remove_image', {id: image.id}) }}"
+                       class="absolute top-3 right-3 bg-red-600 hover:bg-red-500 text-white rounded-full p-2 text-sm z-20 transition duration-200"
+                       title="Delete Image">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
+
+                    <!-- Image -->
+                    <img src="{{ vich_uploader_asset(image, 'imageFile') }}"
+                         alt="Product image"
+                         class="w-full h-48 object-cover rounded-xl">
+                </div>
+            {% else %}
+                <p class="text-center col-span-full text-gray-400">No images uploaded yet.</p>
+            {% endfor %}
+        </div>
+
+        <!-- Add New Image -->
+        <div class="bg-white rounded-xl p-8 shadow-md max-w-xl mx-auto">
+            <h3 class="text-2xl font-semibold mb-6 text-center text-gray-900">Add a New Image</h3>
+
+            {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+            <div>
+                {{ form_row(form.imageFile, {
+                    'attr': {
+                        'class': 'w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 p-2'
+                    }
+                }) }}
+            </div>
+
+            <div class="text-center">
+                <button type="submit"
+                        class="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-3 rounded-lg transition">
+                    <i class="bi bi-plus-lg mr-2"></i> Add Image
+                </button>
+            </div>
+            {{ form_end(form) }}
+
+            <div class="mt-6 text-center">
+                <a href="{{ path('app_product_show', {id: product.id}) }}"
+                   class="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 rounded-lg transition">
+                    Confirm & Return
+                </a>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}

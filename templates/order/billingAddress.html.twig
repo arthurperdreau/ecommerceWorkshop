@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Choix de l'adresse de facturation{% endblock %}
+
+{% block body %}
+    <div class="max-w-4xl mx-auto px-4 py-16 bg-gray-50">
+        <h1 class="text-2xl font-bold mb-8 text-center text-gray-900">Choisissez une adresse de facturation</h1>
+
+        {% if app.user.profile.address is not empty %}
+            <div class="space-y-4">
+                {% for address in app.user.profile.address %}
+                    <a href="{{ path('app_order_shippingaddress', { id: address.id }) }}"
+                       class="block bg-white border border-gray-200 hover:border-orange-500 hover:shadow-lg rounded-lg p-4 transition">
+                        <div class="text-gray-900 font-semibold">
+                            {{ address.streetNumber }} {{ address.streetName }}
+                        </div>
+                        <div class="text-gray-700 text-sm">
+                            {{ address.zipCode }} {{ address.city }}, {{ address.country }}
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center text-gray-500">
+                Aucune adresse enregistrée dans votre profil.
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

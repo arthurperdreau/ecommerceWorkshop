@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Product{% endblock %}
+
+{% block body %}
+    <div class="pt-20 max-w-3xl mx-auto px-6 py-12">
+
+        <h1 class="text-4xl font-bold mb-10 text-center text-gray-900">Create a New Product</h1>
+
+        <div class="bg-white shadow-lg rounded-xl p-8">
+            {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+
+            {{ form_row(form.name, {
+                'attr': {
+                    'class': 'w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500'
+                }
+            }) }}
+
+            {{ form_row(form.description, {
+                'attr': {
+                    'class': 'w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500',
+                    'rows': 5
+                }
+            }) }}
+
+            {{ form_row(form.price, {
+                'attr': {
+                    'class': 'w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500'
+                }
+            }) }}
+
+            {{ form_row(form.stock, {
+                'attr': {
+                    'class': 'w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500'
+                }
+            }) }}
+
+            {{ form_row(form.category, {
+                'attr': {
+                    'class': 'w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500'
+                }
+            }) }}
+
+            <button type="submit"
+                    class="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-lg transition">
+                <i class="bi bi-check-lg mr-2"></i> Save
+            </button>
+
+            {{ form_end(form) }}
+        </div>
+
+        <div class="mt-8 text-center">
+            <a href="{{ path('app_product_index') }}"
+               class="text-orange-600 hover:text-orange-800 font-medium inline-flex items-center gap-1">
+                <i class="bi bi-arrow-left"></i> Back to product list
+            </a>
+        </div>
+    </div>
+{% endblock %}

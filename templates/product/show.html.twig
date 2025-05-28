@@ -1,0 +1,182 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block body %}
+
+    <div class="pt-20 max-w-6xl mx-auto px-4 py-12">
+        {% set avg = product.averageStars %}
+
+        <div class="grid md:grid-cols-2 gap-10 bg-white shadow-lg rounded-xl overflow-hidden">
+            <div class="relative">
+                {% if product.images|length > 0 %}
+                    <div class="carousel flex transition-transform duration-500 ease-in-out" data-index="0">
+                        {% for image in product.images %}
+                            <img src="{{ vich_uploader_asset(image, 'imageFile') }}"
+                                 alt="Product image"
+                                 class="w-full h-[28rem] object-cover flex-shrink-0 rounded-tl-xl rounded-bl-xl">
+                        {% endfor %}
+                    </div>
+                    {% if product.images|length > 1 %}
+                        <button class="prev absolute top-1/2 left-3 transform -translate-y-1/2 bg-black bg-opacity-40 text-white p-2 rounded-full z-10 hover:bg-opacity-60 transition">
+                            <i class="bi bi-chevron-left text-xl"></i>
+                        </button>
+                        <button class="next absolute top-1/2 right-3 transform -translate-y-1/2 bg-black bg-opacity-40 text-white p-2 rounded-full z-10 hover:bg-opacity-60 transition">
+                            <i class="bi bi-chevron-right text-xl"></i>
+                        </button>
+                    {% endif %}
+                {% else %}
+                    <div class="w-full h-[28rem] bg-gray-100 flex items-center justify-center rounded-tl-xl rounded-bl-xl text-gray-400">
+                        No images available
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="flex flex-col justify-between p-6">
+                <div>
+                    <h1 class="text-4xl font-extrabold mb-5 text-gray-900">{{ product.name }}</h1>
+
+                    {% if avg is not null %}
+                        <div class="flex items-center gap-2 mb-5">
+                            {% for i in 1..5 %}
+                                {% if i <= avg %}
+                                    <i class="bi bi-star-fill text-yellow-400 text-xl"></i>
+                                {% elseif i - avg < 1 %}
+                                    <i class="bi bi-star-half text-yellow-400 text-xl"></i>
+                                {% else %}
+                                    <i class="bi bi-star text-gray-300 text-xl"></i>
+                                {% endif %}
+                            {% endfor %}
+                            <span class="text-gray-600 text-sm ml-2">({{ avg }}/5)</span>
+                        </div>
+                    {% else %}
+                        <p class="text-gray-500 mb-5 italic">No reviews yet.</p>
+                    {% endif %}
+
+                    <p class="text-lg text-gray-700 mb-8 leading-relaxed">{{ product.description }}</p>
+
+                    <p class="text-3xl font-bold text-green-600 mb-2">{{ product.price }} €</p>
+
+                    {% if product.stock > 0 %}
+                        <p class="text-sm text-gray-600 mb-8">In stock: {{ product.stock }} item{{ product.stock > 1 ? 's' : '' }}</p>
+                    {% else %}
+                        <p class="text-sm text-red-600 font-semibold mb-8">Out of stock</p>
+                    {% endif %}
+
+                </div>
+
+                <div class="flex items-center gap-5 mt-6">
+                    <a href="{{ path('app_product_index') }}" class="text-orange-600 hover:underline font-semibold flex items-center gap-1">
+                        <i class="bi bi-arrow-left"></i> Back to catalog
+                    </a>
+
+                    {% if product.stock <= 0 %}
+                        <button class="bg-gray-300 text-gray-600 px-8 py-3 rounded shadow font-semibold opacity-60 cursor-not-allowed" disabled>
+                            Out of stock
+                        </button>
+                    {% else %}
+                        <a href="{{ path('app_cart_add_product', {id: product.id, quantity: 1}) }}"
+                           class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded shadow font-semibold transition">
+                            Add to cart
+                        </a>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+
+        <section class="mt-20">
+            <h2 class="text-3xl font-semibold mb-8 text-gray-900">Leave a review</h2>
+            <div class="bg-gray-100 p-8 rounded-lg shadow">
+                {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+                {{ form_row(form.content, {'attr': {'class': 'w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-orange-400'}}) }}
+                {{ form_row(form.stars, {'attr': {'class': 'w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-orange-400'}}) }}
+                <button type="submit" class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded font-semibold transition">
+                    Submit
+                </button>
+                {{ form_end(form) }}
+            </div>
+
+            {% if product.reviews is not empty %}
+                <h2 class="text-3xl font-semibold mt-16 mb-8 text-gray-900">Customer reviews</h2>
+                <div class="space-y-8">
+                    {% for review in product.reviews %}
+                        <article class="bg-white p-6 rounded-lg shadow border-l-4 border-orange-500">
+                            <header class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-sm text-gray-500">{{ review.author.ofUser.email }}</p>
+                                    <div class="flex items-center mt-1 mb-3">
+                                        {% for i in 1..5 %}
+                                            {% if i <= review.stars %}
+                                                <i class="bi bi-star-fill text-yellow-400"></i>
+                                            {% else %}
+                                                <i class="bi bi-star text-gray-300"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <p class="text-gray-800">{{ review.content }}</p>
+                                </div>
+                                <div class="flex flex-col gap-3 items-end text-sm">
+                                    <a href="{{ path('app_review_edit', {'id': review.id}) }}" title="Edit" class="text-yellow-600 hover:text-yellow-800">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <a href="{{ path('app_review_delete', {'id': review.id}) }}" title="Delete" class="text-red-600 hover:text-red-800">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                    <a href="{{ path('app_relevance_new', {id: review.id}) }}" class="text-orange-500 hover:underline">Relevance</a>
+                                </div>
+                            </header>
+                            {% if review.averageRelevance %}
+                                <p class="text-sm text-gray-500 mt-4 italic">Average relevance: {{ review.averageRelevance|number_format(1) }} / 5</p>
+                            {% endif %}
+                        </article>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </section>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Navbar dropdown toggle
+            const toggleBtn = document.getElementById('menu-toggle');
+            const dropdown = document.getElementById('dropdown-menu');
+
+            toggleBtn.addEventListener('click', function () {
+                dropdown.classList.toggle('hidden');
+            });
+
+            // Carousel logic
+            document.querySelectorAll('.carousel').forEach(carousel => {
+                const slides = carousel.children;
+                const total = slides.length;
+                let index = 0;
+
+                const container = carousel.parentElement;
+                const nextBtn = container.querySelector('.next');
+                const prevBtn = container.querySelector('.prev');
+
+                function updateCarousel() {
+                    carousel.style.transform = `translateX(-${index * 100}%)`;
+                }
+
+                if (nextBtn && prevBtn) {
+                    nextBtn.addEventListener('click', () => {
+                        index = (index + 1) % total;
+                        updateCarousel();
+                    });
+
+                    prevBtn.addEventListener('click', () => {
+                        index = (index - 1 + total) % total;
+                        updateCarousel();
+                    });
+                }
+
+                updateCarousel();
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin{% endblock %}
+
+{% block body %}
+    <div class="max-w-6xl mx-auto px-4 py-16 bg-gray-50">
+        <h3 class="text-2xl font-semibold text-center mb-6 text-gray-900">Users</h3>
+
+        <!-- Desktop Table -->
+        <div class="hidden md:block">
+            <table class="min-w-full bg-white rounded-lg overflow-hidden shadow">
+                <thead class="bg-gray-100 text-gray-700">
+                <tr>
+                    <th class="px-4 py-3 text-left">ID</th>
+                    <th class="px-4 py-3 text-left">Email</th>
+                    <th class="px-4 py-3 text-left">Role</th>
+                    <th class="px-4 py-3 text-left">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for user in users %}
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="px-4 py-3 text-sm text-gray-900">{{ user.id }}</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">{{ user.email }}</td>
+                        <td class="px-4 py-3 text-sm space-x-2">
+                            {% for role in user.roles %}
+                                {% if role == 'ROLE_USER' %}
+                                    <span class="bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded">User</span>
+                                {% elseif role == 'ROLE_ADMIN' %}
+                                    <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2 py-1 rounded">Admin</span>
+                                {% elseif role == 'ROLE_EMPLOYEE' %}
+                                    <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded">Employee</span>
+                                {% endif %}
+                            {% endfor %}
+                            {% if user == app.user %}
+                                <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded">You</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-3 text-sm space-x-2">
+                            {% if 'ROLE_ADMIN' not in user.roles %}
+                                <a href="{{ path('promote', {id:user.id}) }}" class="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded text-sm font-medium">Promote Admin</a>
+                            {% else %}
+                                <a href="{{ path('demote', {id:user.id}) }}" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm font-medium">Demote Admin</a>
+                            {% endif %}
+                            {% if 'ROLE_EMPLOYEE' not in user.roles %}
+                                <a href="{{ path('setemployee', {id:user.id}) }}" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm font-medium">Promote Employee</a>
+                            {% else %}
+                                <a href="{{ path('demoteemployee', {id:user.id}) }}" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm font-medium">Demote Employee</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Mobile List -->
+        <div class="md:hidden space-y-4">
+            {% for user in users %}
+                <div class="bg-white p-4 rounded shadow">
+                    <div class="text-lg font-semibold text-gray-900">User #{{ user.id }}</div>
+                    <div class="text-sm text-gray-700"><strong>Email:</strong> {{ user.email }}</div>
+                    <div class="mt-2 space-x-2">
+                        {% for role in user.roles %}
+                            {% if role == 'ROLE_USER' %}
+                                <span class="bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded">User</span>
+                            {% elseif role == 'ROLE_ADMIN' %}
+                                <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2 py-1 rounded">Admin</span>
+                            {% elseif role == 'ROLE_EMPLOYEE' %}
+                                <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded">Employee</span>
+                            {% endif %}
+                        {% endfor %}
+                        {% if user == app.user %}
+                            <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded">You</span>
+                        {% endif %}
+                    </div>
+                    <div class="mt-2 space-y-2">
+                        {% if 'ROLE_ADMIN' not in user.roles %}
+                            <a href="{{ path('promote', {id:user.id}) }}" class="block bg-orange-500 hover:bg-orange-600 text-white text-center text-sm px-3 py-1 rounded font-medium">Promote Admin</a>
+                        {% else %}
+                            <a href="{{ path('demote', {id:user.id}) }}" class="block bg-red-500 hover:bg-red-600 text-white text-center text-sm px-3 py-1 rounded font-medium">Demote Admin</a>
+                        {% endif %}
+                        {% if 'ROLE_EMPLOYEE' not in user.roles %}
+                            <a href="{{ path('setemployee', {id:user.id}) }}" class="block bg-green-500 hover:bg-green-600 text-white text-center text-sm px-3 py-1 rounded font-medium">Promote Employee</a>
+                        {% else %}
+                            <a href="{{ path('demoteemployee', {id:user.id}) }}" class="block bg-red-500 hover:bg-red-600 text-white text-center text-sm px-3 py-1 rounded font-medium">Demote Employee</a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

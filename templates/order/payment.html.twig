@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Order Summary{% endblock %}
+
+{% block body %}
+    <div class="max-w-4xl mx-auto px-4 py-10">
+        <h1 class="text-2xl font-bold text-center text-gray-900 mb-6">Order Recap</h1>
+
+        <div class="overflow-x-auto bg-white shadow-md rounded-lg p-6 mb-8">
+            <table class="min-w-full table-auto text-left">
+                <thead>
+                <tr class="border-b text-gray-600">
+                    <th class="py-2">Product Name</th>
+                    <th class="py-2">Unit Price</th>
+                    <th class="py-2">Quantity</th>
+                    <th class="py-2">Subtotal</th>
+                </tr>
+                </thead>
+                <tbody class="text-gray-800">
+                {% for item in cart %}
+                    <tr class="border-b">
+                        <td class="py-2">{{ item.product.name }}</td>
+                        <td class="py-2">{{ item.product.price }} €</td>
+                        <td class="py-2">{{ item.quantity }}</td>
+                        <td class="py-2">{{ item.product.price * item.quantity }} €</td>
+                    </tr>
+                {% endfor %}
+                <tr class="font-semibold">
+                    <td colspan="2"></td>
+                    <td class="py-2">Grand Total</td>
+                    <td class="py-2">{{ total }} €</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="bg-white shadow-md rounded-lg p-6 mb-8">
+            <h2 class="text-xl font-semibold text-gray-800 mb-2">Billing Address</h2>
+            <p class="text-gray-600">{{ billing.streetName }}</p>
+        </div>
+
+        <div class="bg-white shadow-md rounded-lg p-6 mb-8">
+            <h2 class="text-xl font-semibold text-gray-800 mb-2">Shipping Address</h2>
+            <p class="text-gray-600">{{ shipping.streetName }}</p>
+        </div>
+
+        <div class="text-center">
+            <h2 class="text-xl font-semibold mb-4">Ready to Pay?</h2>
+            <button id="checkout-button"
+                    class="px-6 py-3 bg-indigo-600 text-white font-medium rounded hover:bg-indigo-700 transition duration-200">
+                Pay with Stripe
+            </button>
+        </div>
+    </div>
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        const stripe = Stripe('{{ stripe_public_key }}');
+        document.getElementById("checkout-button").addEventListener("click", function () {
+            fetch('{{ path('create_checkout_session') }}', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    billingId: {{ billing.id }},
+                    shippingId: {{ shipping.id }}
+                })
+            })
+                .then(response => response.json())
+                .then(session => {
+                    return stripe.redirectToCheckout({ sessionId: session.id });
+                })
+                .catch(error => console.error("Stripe error:", error));
+        });
+    </script>
+{% endblock %}

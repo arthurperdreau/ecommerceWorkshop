@@ -1,0 +1,118 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Panier{% endblock %}
+
+{% block body %}
+    <div class="max-w-4xl mx-auto px-4 py-10">
+        <h1 class="text-2xl font-bold mb-6 text-center text-gray-900">Mon Panier</h1>
+
+        {% if cart is empty %}
+            <p class="text-center text-gray-600">Votre panier est vide.</p>
+        {% else %}
+            <!-- Mobile : liste simple -->
+            <div class="space-y-6 md:hidden">
+                {% set total = 0 %}
+                {% for item in cart %}
+                    {% set subtotal = item.product.price * item.quantity %}
+                    {% set total = total + subtotal %}
+                    <div class="border rounded-lg p-4 shadow-sm bg-white">
+                        <div class="font-semibold text-lg text-gray-800">{{ item.product.name }}</div>
+                        <div class="flex justify-between text-gray-700 mt-1">
+                            <span>Prix unitaire :</span><span>{{ item.product.price }} €</span>
+                        </div>
+                        <div class="flex justify-between text-gray-700 mt-1">
+                            <span>Quantité :</span><span>{{ item.quantity }}</span>
+                        </div>
+                        <div class="flex justify-between text-gray-700 mt-1">
+                            <span>Sous-total :</span><span>{{ subtotal }} €</span>
+                        </div>
+                        <div class="flex items-center space-x-3 mt-4" data-product-id="{{ item.product.id }}" data-max="{{ item.product.stock - item.quantity }}">
+                            {% set max_addable = item.product.stock - item.quantity %}
+                            {% if max_addable > 0 %}
+                                <input type="number" min="1" max="{{ max_addable }}" value="1" class="qty-input border rounded px-2 py-1 w-16" />
+                                <button class="add-btn text-green-600 hover:underline font-semibold" type="button">+</button>
+                            {% else %}
+                                <span class="text-gray-400 cursor-not-allowed select-none">+</span>
+                            {% endif %}
+                            <a href="{{ path('app_cart_remove_unit', { id: item.product.id, quantity:1 }) }}" class="text-yellow-600 hover:underline font-semibold">-</a>
+                            <a href="{{ path('app_cart_remove_item', { id: item.product.id }) }}" class="text-red-600 hover:underline font-semibold">Retirer</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Desktop : table -->
+            <div class="hidden md:block overflow-x-auto rounded-lg border border-gray-200 shadow-sm bg-white">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-100 text-gray-700 text-left font-semibold">
+                    <tr>
+                        <th class="px-6 py-3">Produit</th>
+                        <th class="px-6 py-3">Prix unitaire</th>
+                        <th class="px-6 py-3">Quantité</th>
+                        <th class="px-6 py-3">Sous-total</th>
+                        <th class="px-6 py-3 text-center">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                    {% set total = 0 %}
+                    {% for item in cart %}
+                        {% set subtotal = item.product.price * item.quantity %}
+                        {% set total = total + subtotal %}
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-800 font-medium">{{ item.product.name }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-800">{{ item.product.price }} €</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-800">{{ item.quantity }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-800">{{ subtotal }} €</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center space-x-3" data-product-id="{{ item.product.id }}" data-max="{{ item.product.stock - item.quantity }}">
+                                {% set max_addable = item.product.stock - item.quantity %}
+                                {% if max_addable > 0 %}
+                                    <input type="number" min="1" max="{{ max_addable }}" value="1" class="qty-input border rounded px-2 py-1 w-16" />
+                                    <button class="add-btn text-green-600 hover:underline font-semibold" type="button">+</button>
+                                {% else %}
+                                    <span class="text-gray-400 cursor-not-allowed select-none">+</span>
+                                {% endif %}
+                                <a href="{{ path('app_cart_remove_unit', { id: item.product.id, quantity:1 }) }}" class="text-yellow-600 hover:underline font-semibold">-</a>
+                                <a href="{{ path('app_cart_remove_item', { id: item.product.id }) }}" class="text-red-600 hover:underline font-semibold">Retirer</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-6 flex flex-col md:flex-row justify-between items-center space-y-3 md:space-y-0">
+                <a href="{{ path('app_order_billingaddress') }}" class="bg-orange-500 hover:bg-orange-700 text-white font-semibold py-2 px-6 rounded shadow transition">Passer la commande</a>
+                <div class="text-gray-900 font-bold text-xl">
+                    Total : {{ total }} €
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        document.querySelectorAll('.add-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const td = button.closest('td') || button.closest('div[data-product-id]');
+                const productId = td.getAttribute('data-product-id');
+                const max = parseInt(td.getAttribute('data-max'), 10);
+                const input = td.querySelector('.qty-input');
+                let qty = parseInt(input.value, 10);
+
+                if (isNaN(qty) || qty < 1) {
+                    qty = 1;
+                }
+                if (qty > max) {
+                    qty = max;
+                    input.value = max;
+                }
+
+                // Redirection vers la route avec quantity dans le path
+                const url = "{{ path('app_cart_add_product', {'id': 'PRODUCT_ID', 'quantity': 'QUANTITY'}) }}"
+                    .replace('PRODUCT_ID', productId)
+                    .replace('QUANTITY', qty);
+
+                window.location.href = url;
+            });
+        });
+    </script>
+{% endblock %}

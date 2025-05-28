@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nos produits{% endblock %}
+
+{% block body %}
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-2xl sm:text-3xl font-bold mb-6 text-center">Nos produits</h1>
+
+        {% if products|length > 0 %}
+            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {% for product in products %}
+                    <a href="{{ path('app_product_show', {'id': product.id}) }}"
+                       class="bg-gray-50   overflow-hidden hover:shadow-lg transition-shadow duration-300 block">
+                        {% if product.images|length > 0 %}
+                            <img src="{{ vich_uploader_asset(product.images[0], 'imageFile') }}"
+                                 alt="{{ product.name }}"
+                                 class="w-full h-48 object-cover">
+                        {% endif %}
+
+                        <div class="p-2">
+                            <h2 class="text-lg font-semibold mb-2 truncate">{{ product.name }}</h2>
+
+                            {% set avg = product.averageStars %}
+                            <div class="flex items-center space-x-1 mb-2">
+                                {% for i in 1..5 %}
+                                    {% if i <= avg %}
+                                        <i class="bi bi-star-fill text-yellow-400 text-base"></i>
+                                    {% elseif i - avg < 1 %}
+                                        <i class="bi bi-star-half text-yellow-400 text-base"></i>
+                                    {% else %}
+                                        <i class="bi bi-star text-gray-300 text-base"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+
+                            <p class="text-orange-600 font-bold text-lg">{{ product.price }} €</p>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-center text-gray-500 mt-10 text-base sm:text-lg">Aucun produit disponible pour le moment.</p>
+        {% endif %}
+
+
+
+    </div>
+{% endblock %}

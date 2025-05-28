@@ -1,0 +1,79 @@
+{% block body %}
+    <!-- Sticky Navbar with integrated search form -->
+    <nav class="bg-orange-500 p-4 flex items-center justify-between fixed top-0 left-0 w-full z-50 shadow-md">
+        <!-- Menu & Logo -->
+        <div class="flex items-center gap-3">
+            <!-- Menu toggle button -->
+            <button id="menu-toggle" class="text-white text-2xl focus:outline-none">
+                <i class="bi bi-list"></i>
+            </button>
+            <span class="text-white font-bold text-lg">MyManga</span>
+        </div>
+
+        <!-- Symfony search form -->
+        {{ form_start(form, {
+            'action': path('app_navbar'),
+            'attr': {'class': 'flex-1 mx-4'}
+        }) }}
+        <div class="relative">
+            {{ form_widget(form.product, {
+                'attr': {
+                    'placeholder': 'Search',
+                    'class': 'w-full pl-4 pr-10 py-2 rounded-md text-sm bg-white text-gray-900 focus:outline-none'
+                }
+            }) }}
+            <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-orange-500">
+                <i class="bi bi-search"></i>
+            </button>
+        </div>
+        {{ form_end(form) }}
+
+        <!-- Icons -->
+        <div class="flex items-center gap-4 text-white text-xl">
+            <a href="{{ path('app_profile') }}"><i class="bi bi-person"></i></a>
+            <a href="{{ path('app_cart') }}"><i class="bi bi-cart"></i></a>
+        </div>
+
+        <!-- Dropdown menu -->
+        <div id="dropdown-menu" class="absolute top-full left-0 mt-2 bg-white shadow-lg w-full px-4 py-3 hidden z-50">
+            <ul class="space-y-2 text-gray-800">
+                <li><a href="{{ path('app_product_index') }}" class="block hover:text-orange-500">Catalog</a></li>
+
+
+                {% if app.user %}
+                    {% if "ROLE_ADMIN" in app.user.roles %}
+                        <li><a href="{{ path('app_admin') }}" class="block hover:text-orange-500">Customers</a></li>
+                        <li><a href="{{ path('app_product_new') }}" class="block hover:text-orange-500">New product</a></li>
+                        <li><a href="{{ path('allOrders') }}" class="block hover:text-orange-500">Orders</a></li>
+                        <li><a href="{{ path('orderInProgress') }}" class="block hover:text-orange-500">Orders in progress</a></li>
+                        <li><a href="{{ path('getStock') }}" class="block hover:text-orange-500">Stock</a></li>
+                        <li><a href="{{ path('app_category') }}" class="block hover:text-orange-500">Categories</a></li>
+
+                    {% endif %}
+                    <li><a href="{{ path('app_my_orders') }}" class="block hover:text-orange-500">My Orders</a></li>
+                {% endif %}
+                <li><a href="{{ path('app_register') }}" class="block hover:text-orange-500">Register</a></li>
+                <li><a href="{{ path('app_login') }}" class="block hover:text-orange-500">Login</a></li>
+                <li><a href="{{ path('app_logout') }}" class="block hover:text-orange-500">Logout</a></li>
+                <li><a href="#" class="block hover:text-orange-500">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- JS for toggling dropdown -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggleBtn = document.getElementById('menu-toggle');
+            const dropdown = document.getElementById('dropdown-menu');
+
+            toggleBtn.addEventListener('click', function () {
+                dropdown.classList.toggle('hidden');
+            });
+        });
+    </script>
+
+    <!-- Page content padding to avoid hidden content under fixed navbar -->
+    <div class="pt-20">
+        {# Your page content here... #}
+    </div>
+{% endblock %}

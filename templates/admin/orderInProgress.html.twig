@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin Orders{% endblock %}
+
+{% block body %}
+    <div class="max-w-6xl mx-auto px-4 py-16">
+        <h1 class="text-3xl font-bold mb-10 text-center text-gray-900">Order Management</h1>
+
+        <div class="grid grid-cols-12 font-semibold text-gray-700 bg-gray-100 py-3 px-4 rounded-t-md border border-b-0 border-gray-200">
+            <div class="col-span-1">ID</div>
+            <div class="col-span-3">Customer</div>
+            <div class="col-span-3">Total</div>
+            <div class="col-span-3">Status</div>
+            <div class="col-span-2 text-center">Details</div>
+        </div>
+
+        {% for order in orders %}
+            <div class="grid grid-cols-12 items-center border border-t-0 border-gray-200 bg-white hover:bg-gray-50 transition px-4 py-3">
+                <div class="col-span-1 text-sm text-gray-800">#{{ order.id }}</div>
+                <div class="col-span-3 text-sm text-gray-800">{{ order.customer.email }}</div>
+                <div class="col-span-3 text-sm text-gray-800">{{ order.total | number_format(2, ',', ' ') }} €</div>
+                <div class="col-span-3 text-sm text-gray-800">
+                    {% if order.status == 0 %}
+                        <span class="text-yellow-600 font-medium">Pending</span>
+                    {% elseif order.status == 1 %}
+                        <span class="text-blue-600 font-medium">Processing</span>
+                    {% elseif order.status == 2 %}
+                        <span class="text-green-600 font-medium">Shipped</span>
+                    {% elseif order.status == 3 %}
+                        <span class="text-gray-600 font-medium">Completed</span>
+                    {% endif %}
+                </div>
+                <div class="col-span-2 text-center">
+                    <a href="{{ path('app_order_see', {id: order.id}) }}"
+                       class="text-indigo-600 hover:underline text-sm font-medium">View</a>
+                </div>
+            </div>
+        {% else %}
+            <div class="text-center py-6 text-gray-500">No orders found.</div>
+        {% endfor %}
+    </div>
+{% endblock %}

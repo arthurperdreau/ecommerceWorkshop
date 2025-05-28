@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Address{% endblock %}
+
+{% block body %}
+    <div class="max-w-xl mx-auto p-6">
+        <h1 class="text-2xl font-bold mb-6 text-gray-800">New Address</h1>
+
+        <div class="bg-white p-6 shadow rounded-lg">
+            {{ form_start(form) }}
+            <div class="space-y-4">
+                {% for field in form %}
+                    <div>
+                        {{ form_label(field, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+                        {{ form_widget(field, {'attr': {'class': 'mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:ring-orange-500 focus:border-orange-500'}}) }}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="mt-6">
+                <button type="submit" class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transition">
+                    Save Address
+                </button>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}
