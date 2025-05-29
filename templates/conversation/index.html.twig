@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inbox - My Messages{% endblock %}
+
+{% block body %}
+    <div class="max-w-2xl mx-auto px-4 py-12">
+        <div class="bg-white shadow-md rounded-2xl p-8">
+            <h1 class="text-2xl font-bold text-orange-600 mb-6">📬 Inbox</h1>
+
+            <p class="mb-6 text-gray-700">Welcome to your message center. Here you can view all your conversations and contact support if needed.</p>
+
+            <div class="flex flex-col gap-4">
+
+                <a href="{{ path('app_conversation_contactSAV', {id: app.user.profile.id }) }}"
+                   class="bg-orange-100 text-orange-700 border border-orange-300 py-2 px-4 rounded hover:bg-orange-200 transition text-center w-full">
+                    ➤ Contact Customer Support
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

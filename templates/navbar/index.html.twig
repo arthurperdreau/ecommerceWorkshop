@@ -44,18 +44,25 @@
                     {% if "ROLE_ADMIN" in app.user.roles %}
                         <li><a href="{{ path('app_admin') }}" class="block hover:text-orange-500">Customers</a></li>
                         <li><a href="{{ path('app_product_new') }}" class="block hover:text-orange-500">New product</a></li>
+
+                        <li><a href="{{ path('app_category') }}" class="block hover:text-orange-500">Categories</a></li>
+
+                    {% elseif "ROLE_EMPLOYEE" in app.user.roles %}
                         <li><a href="{{ path('allOrders') }}" class="block hover:text-orange-500">Orders</a></li>
                         <li><a href="{{ path('orderInProgress') }}" class="block hover:text-orange-500">Orders in progress</a></li>
                         <li><a href="{{ path('getStock') }}" class="block hover:text-orange-500">Stock</a></li>
-                        <li><a href="{{ path('app_category') }}" class="block hover:text-orange-500">Categories</a></li>
+                        <li><a href="{{ path('app_conversations_sav') }}" class="block hover:text-orange-500">SAV messages</a></li>
+                    {% endif%}
 
-                    {% endif %}
                     <li><a href="{{ path('app_my_orders') }}" class="block hover:text-orange-500">My Orders</a></li>
+                    <li><a href="{{ path('app_conversation') }}" class="block hover:text-orange-500">Contact</a></li>
+
                 {% endif %}
+
                 <li><a href="{{ path('app_register') }}" class="block hover:text-orange-500">Register</a></li>
                 <li><a href="{{ path('app_login') }}" class="block hover:text-orange-500">Login</a></li>
                 <li><a href="{{ path('app_logout') }}" class="block hover:text-orange-500">Logout</a></li>
-                <li><a href="#" class="block hover:text-orange-500">Contact</a></li>
+
             </ul>
         </div>
     </nav>

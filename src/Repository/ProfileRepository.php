@@ -31,13 +31,20 @@ class ProfileRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Profile
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function findOneByRole(string $role): ?Profile
+    {
+        $profiles = $this->createQueryBuilder('p')
+            ->join('p.ofUser', 'u')
+            ->addSelect('u')
+            ->getQuery()
+            ->getResult();
+
+        foreach ($profiles as $profile) {
+            if (in_array($role, $profile->getOfUser()->getRoles())) {
+                return $profile;
+            }
+        }
+
+        return null;
+    }
 }

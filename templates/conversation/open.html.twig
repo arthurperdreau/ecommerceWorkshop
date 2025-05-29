@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Messages{% endblock %}
+
+{% block body %}
+    <div class="min-h-screen flex flex-col items-center py-12 px-4 bg-gray-50">
+        <div class="w-full max-w-2xl bg-white rounded-2xl shadow-lg p-8">
+
+            <a href="{{ path('app_product_index') }}" class="self-start text-gray-500 hover:text-[#D66853] mb-6 font-semibold transition">
+                &larr; Back to shop
+            </a>
+
+            <h1 class="text-3xl font-bold mb-8 text-[#D66853]">💬 Messages</h1>
+
+            <div class="flex flex-col gap-6 max-h-[520px] overflow-y-auto border border-gray-200 rounded-lg p-6 bg-white shadow-inner">
+
+                {% for message in conversation.messages %}
+                    <div class="flex {% if message.author.id == app.user.profile.id %}justify-end{% else %}justify-start{% endif %}">
+                        <div class="max-w-[75%]">
+                            <div class="flex items-start gap-4 {% if message.author.id == app.user.id %}flex-row-reverse{% endif %}">
+
+                                <div>
+                                    <div class="text-xs text-gray-500 mb-1 {% if message.author.id == app.user.id %}text-right{% endif %}">
+                                        {% if 'ROLE_EMPLOYEE' in message.author.ofUser.roles %}
+                                            <span class="font-semibold text-[#D66853]">Support</span>
+                                        {% else %}
+                                            <span class="font-semibold text-gray-700">{{ message.author.name }}</span>
+                                        {% endif %}
+                                        <br>
+                                        <span class="text-[11px] text-gray-400 italic">
+                                            {{ message.author.ofUser.email }} · {{ message.createdAt|date('d M Y H:i') }}
+                                        </span>
+                                    </div>
+
+                                    <div class=" rounded-xl
+                                        {% if message.author.id == app.user.profile.id %}
+                                            bg-orange-500 text-white rounded-br-none
+                                        {% else %}
+                                            bg-gray-100 text-gray-900 rounded-bl-none
+                                        {% endif %}
+                                        shadow-sm whitespace-pre-wrap break-words leading-relaxed font-sans text-base transition">
+                                        {{ message.content|nl2br }}
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <p class="text-gray-400 italic text-center mt-20">No messages yet...</p>
+                {% endfor %}
+            </div>
+
+            <div class="mt-6">
+                {{ form_start(form, { attr: { class: 'flex gap-4 items-center' } }) }}
+                {{ form_widget(form.content, { attr: {
+                    class: 'flex-grow border border-gray-300 rounded-lg px-5 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#D66853] transition',
+                    placeholder: 'Write your message here...'
+                } }) }}
+                <button type="submit"
+                        class="bg-orange-500 text-white font-semibold px-7 py-3 rounded-lg hover:bg-[#bf503f] transition duration-200 shadow-lg">
+                    Send
+                </button>
+                {{ form_end(form) }}
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
